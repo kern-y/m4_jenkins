@@ -4,4 +4,4 @@ apt-get install openjdk-11-jdk -y ; \
 apt-get install nginx -y ; \
 apt-get install net-tools -y ;\
 
-ENTRYPOINT ["nginx"]
+CMD ["nginx", "-g", "daemon off;"]
