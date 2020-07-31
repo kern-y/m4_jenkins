@@ -1,0 +1,35 @@
+#!groovy
+properties([disableConcurrentBuilds()])
+
+pipeline {
+    agent {
+         label 'master'
+         }
+
+    options {
+         buildDiscarder(logRotator(numToKeepStr: '5',  artifactNumToKeepStr: '5'))
+         timestamps()
+    }
+
+    stages {
+        stage('create docker image') {
+            steps {
+                echo '============ start building image ============='
+                dir ('docker') {
+                          sh 'docker build -t u20njant:version1 .'
+                         }
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+                sh 'docker run -it --name mytest_$BUILD_NUMBER -p 8081:80 u20njant:version1'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
+            }
+        }
+    }
+}
