@@ -22,7 +22,8 @@ pipeline {
         stage('test docker image') {
             steps {
                 echo '......testing docker image......'
-                sh 'docker run --name mytest_$BUILD_NUMBER -p 8081:80 u20njant:version1'
+                sh 'docker run -d --name mytest_$BUILD_NUMBER -p 8081:80 u20njant:version1'
+				sh 'docker exe -ti mytest_$BUILD_NUMBER sudo service nginx start'
             }
         }
         stage('Deploy') {
