@@ -23,7 +23,7 @@ pipeline {
             steps {
                 echo '......testing docker image......'
                 sh 'docker run -d --name mytest_$BUILD_NUMBER -p 8081:80 u20njant:version1'
-				sh 'docker exe -d mytest_$BUILD_NUMBER sudo service nginx start'
+				sh 'docker exec -d mytest_$BUILD_NUMBER sudo service nginx start'
             }
         }
         stage('Deploy') {
