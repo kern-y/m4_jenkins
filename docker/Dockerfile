@@ -23,6 +23,9 @@ RUN sudo apt-get install openjdk-11-jdk -y ; \
 sudo apt-get install nginx -y ; \
 sudo apt-get install net-tools -y ;
 
+#Copying nginx conf
+COPY docker/nginx.conf /etc/nginx/nginx.conf 
+
 #switching to nginx-user
 USER nginx-user
 
