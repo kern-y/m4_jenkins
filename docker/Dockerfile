@@ -27,4 +27,4 @@ sudo apt-get install net-tools -y ;
 USER nginx-user
 
 ENTRYPOINT ["bash"]
-CMD ["sudo", "service", "nginx", "start"]
+
