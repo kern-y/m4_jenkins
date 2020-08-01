@@ -22,11 +22,22 @@ pipeline {
         stage('test docker image') {
             steps {
                 echo '......testing docker image......'
-                sh 'docker run -d --name mytest_$BUILD_NUMBER -p 8081:80 u20njant:version1'
+                sh 'docker run -d --name mytest_$BUILD_NUMBER -p 8081:3434 u20njant:version1'
 				sh 'docker exec -d mytest_$BUILD_NUMBER sudo service nginx start'
-            }
+				def http_code = sh(script: ' curl -sL http://localhost:8081 -w "%{http_code}\\n" -o /dev/null', returnStdout: true)
+				if (http_code.toInteger() != 200 ) {
+					echo "*******************************************"
+					echo               "Test is failed"
+					echo "*******************************************"
+					currentBuild.result = 'FAILED';
+					isCanceled='yes'
+					return
+				}
+				echo 'test is passed successfully'
+			    
+		    }
         }
-        stage('Deploy') {
+        stage('push docker image to Docker hub') {
             steps {
                 echo 'Deploying....'
             }
