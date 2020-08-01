@@ -26,5 +26,4 @@ sudo apt-get install net-tools -y ;
 #switching to nginx-user
 USER nginx-user
 
-ENTRYPOINT ["bash"]
-
+ENTRYPOINT ["tail", "-f", "/dev/null"]
