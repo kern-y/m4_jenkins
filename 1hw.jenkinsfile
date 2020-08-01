@@ -2,6 +2,10 @@
 properties([disableConcurrentBuilds()])
 
 pipeline {
+environment {
+    registry = "maurick/ubuntu"
+    registryCredential = 'dockerhub'
+	}
     agent {
          label 'master'
          }
@@ -15,14 +19,14 @@ pipeline {
             steps {
                 echo '...... start building image ......'
                 dir ('docker') {
-                          sh 'docker build -t u20njant:version1 .'
+                          sh 'docker build -t $registry:$BUILD_NUMBER .'
                          }
             }
         }
         stage('test docker image') {
             steps {
                 echo '......testing docker image......'
-                sh 'docker run -d --name mytest_$BUILD_NUMBER -p 8081:3434 u20njant:version1'
+                sh 'docker run -d --name mytest_$BUILD_NUMBER -p 8081:3434 $registry:$BUILD_NUMBER'
 				sh 'docker exec -d mytest_$BUILD_NUMBER sudo service nginx start'
 				def http_code = sh(script: ' curl -sL http://localhost:8081 -w "%{http_code}\\n" -o /dev/null', returnStdout: true)
 				if (http_code.toInteger() != 200 ) {
@@ -39,7 +43,13 @@ pipeline {
         }
         stage('push docker image to Docker hub') {
             steps {
-                echo 'Deploying....'
+                echo '.....pushing image to DockerHub.....'
+				script {
+				docker.withRegistry( '', registryCredential )
+				  {
+				   dockerImage.push()
+				  }
+				}
             }
         }
     }
