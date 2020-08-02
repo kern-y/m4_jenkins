@@ -12,19 +12,12 @@ pipeline {
 	stages {
         stage("pulling a project from GitHub") {
             steps {
-			    deleteDir() /* clean up our workspace */
                 git changelog: false, poll: false, url: 'https://github.com/springframeworkguru/springbootwebapp'
 				}
         }
         stage("building an artifact") {
             steps {
 			    sh 'docker run --rm --name app_build -v $WORKSPACE:/usr/src/mymaven -w /usr/src/mymaven maven:latest mvn clean install'
-            }
-        }
-        stage("removing build container and image") {
-            steps {
-			     sh 'docker rm app_build'
-                 sh 'docker rmi maven:latest'
             }
         }
         stage("running an artifact") {
