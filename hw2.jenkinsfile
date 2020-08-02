@@ -30,9 +30,9 @@ pipeline {
                 /* sh 'docker rmi maven:latest' */
             }
         }
-        stage("cheking an artifact") {
+        stage("running an artifact") {
             steps {
-			    sh 'cd target 
+			    sh 'cd target'
 				sh 'java -jar simple-web-app.war --httpPort=3000'
             }
         }
