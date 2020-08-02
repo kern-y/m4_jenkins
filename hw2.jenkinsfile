@@ -13,27 +13,29 @@ pipeline {
         stage("pulling a project from GitHub") {
             steps {
 			    deleteDir() /* clean up our workspace */
-                git changelog: false, poll: false, url: 'https://github.com/sagardeo21m/SimpleWebApp'
-				/* sh 'rm -R ./target' */
-            }
+                git changelog: false, poll: false, url: 'https://github.com/springframeworkguru/springbootwebapp'
+				}
         }
         stage("building an artifact") {
             steps {
-			    sh 'pwd'
-                /* sh 'docker run --rm --name app_build -v $WORKSPACE:/usr/src/mymaven -w /usr/src/mymaven maven:latest mvn clean install' */
+			    sh 'docker run --rm --name app_build -v $WORKSPACE:/usr/src/mymaven -w /usr/src/mymaven maven:latest mvn clean install'
             }
         }
         stage("removing build container and image") {
             steps {
-			     sh 'pwd'
-                /* sh 'docker rm app_build' */
-                /* sh 'docker rmi maven:latest' */
+			     sh 'docker rm app_build'
+                 sh 'docker rmi maven:latest'
             }
         }
         stage("running an artifact") {
             steps {
 			    sh 'cd target'
-				sh 'java -jar simple-web-app.war --httpPort=3000'
+				sh 'java -jar *.war --httpPort=3000'
+            }
+        }
+		        stage("testing an app") {
+            steps {
+			    sh 'curl -sL http://localhost:3000 -w "%{http_code}\\n" -o /dev/null'
             }
         }
 
