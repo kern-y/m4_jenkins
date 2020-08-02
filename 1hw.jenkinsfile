@@ -28,17 +28,7 @@ environment {
                 echo '......testing docker image......'
                 sh 'docker run -d --name mytest_$BUILD_NUMBER -p 8081:3434 $registry:$BUILD_NUMBER'
 				sh 'docker exec -d mytest_$BUILD_NUMBER sudo service nginx start'
-				def http_code = sh(script: ' curl -sL http://localhost:8081 -w "%{http_code}\\n" -o /dev/null', returnStdout: true)
-				if (http_code.toInteger() != 200 ) {
-					echo "*******************************************"
-					echo               "Test is failed"
-					echo "*******************************************"
-					currentBuild.result = 'FAILED';
-					isCanceled='yes'
-					return
-				}
-				echo 'test is passed successfully'
-			    
+				sh 'curl -sL http://localhost:8081 -w "%{http_code}\\n" -o /dev/null'				    
 		    }
         }
         stage('push docker image to Docker hub') {
