@@ -24,7 +24,7 @@ sudo apt-get install nginx -y ; \
 sudo apt-get install net-tools -y ;
 
 #Copying nginx conf
-COPY docker/nginx.conf /etc/nginx/nginx.conf 
+COPY ./nginx.conf /etc/nginx/nginx.conf 
 
 #switching to nginx-user
 USER nginx-user
