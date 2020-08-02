@@ -17,7 +17,7 @@ pipeline {
         }
         stage("building an artifact") {
             steps {
-                sh 'docker run -it --rm --name app_build -v ./:/usr/src/mymaven -w /usr/src/mymaven maven:latest mvn clean install'
+                sh 'docker run --rm --name app_build -v ./:/usr/src/mymaven -w /usr/src/mymaven maven:latest mvn clean install'
             }
         }
         stage("removing build container and image") {
