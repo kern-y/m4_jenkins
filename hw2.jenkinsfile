@@ -14,7 +14,7 @@ pipeline {
 	stages {
         stage("pulling a project from GitHub") {
             steps {
-                sh 'git changelog: false, poll: false, url: 'https://github.com/sagardeo21m/SimpleWebApp''
+                git changelog: false, poll: false, url: 'https://github.com/sagardeo21m/SimpleWebApp'
             }
         }
         stage("building an artifact") {
