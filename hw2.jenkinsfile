@@ -12,12 +12,15 @@ pipeline {
 	stages {
         stage("pulling a project from GitHub") {
             steps {
+			    deleteDir() /* clean up our workspace */
                 git changelog: false, poll: false, url: 'https://github.com/sagardeo21m/SimpleWebApp'
             }
         }
         stage("building an artifact") {
             steps {
-                sh 'docker run --rm --name app_build -v ./:/usr/src/mymaven -w /usr/src/mymaven maven:latest mvn clean install'
+                sh 'pwd'
+				sh 'echo $WORKSPACE'
+				/* sh 'docker run --rm --name app_build -v $WORKSPACE:/usr/src/mymaven -w /usr/src/mymaven maven:latest mvn clean install' */
             }
         }
         stage("removing build container and image") {
