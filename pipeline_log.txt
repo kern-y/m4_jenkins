@@ -1,0 +1,142 @@
+Started by user Yaroslav
+Obtained 1hw.jenkinsfile from git https://github.com/kern-y/m4_jenkins
+Running in Durability level: MAX_SURVIVABILITY
+[Pipeline] Start of Pipeline
+[Pipeline] properties
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/1hw
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+No credentials specified
+ > git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/kern-y/m4_jenkins # timeout=10
+Fetching upstream changes from https://github.com/kern-y/m4_jenkins
+ > git --version # timeout=10
+ > git fetch --tags --progress -- https://github.com/kern-y/m4_jenkins +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision 86796527da5c567794800a15aa9b89b1697538e7 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 86796527da5c567794800a15aa9b89b1697538e7 # timeout=10
+Commit message: "updating the file with semicolon"
+ > git rev-list --no-walk 1ffb33df93c739d48284fe9123f9c9b6784c3f5a # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timestamps
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (create docker image)
+[Pipeline] echo
+[2020-08-02T01:14:19.671Z] ...... start building image ......
+[Pipeline] dir
+[2020-08-02T01:14:19.693Z] Running in /var/lib/jenkins/workspace/1hw/docker
+[Pipeline] {
+[Pipeline] sh
+[2020-08-02T01:14:20.067Z] + docker build -t maurick/ubuntu:25 .
+[2020-08-02T01:14:20.067Z] Sending build context to Docker daemon  4.608kB
+
+[2020-08-02T01:14:20.318Z] Step 1/8 : FROM ubuntu:latest
+[2020-08-02T01:14:20.318Z]  ---> 1e4467b07108
+[2020-08-02T01:14:20.318Z] Step 2/8 : RUN apt-get update && apt-get install wget -y ; apt-get install sudo -y;
+[2020-08-02T01:14:20.318Z]  ---> Using cache
+[2020-08-02T01:14:20.318Z]  ---> c944729851eb
+[2020-08-02T01:14:20.318Z] Step 3/8 : RUN groupadd --gid 2000 admin && useradd --uid 2000 --gid admin --shell /bin/bash --create-home admin && passwd -d admin && usermod -aG sudo admin; groupadd --gid 2001 nginx-user && useradd --uid 2001 --gid nginx-user --shell /bin/bash --create-home nginx-user && passwd -d nginx-user; echo "nginx-user ALL=(ALL) NOPASSWD: /usr/sbin/service nginx start,/usr/sbin/service nginx stop,/usr/sbin/service nginx restart">>/etc/sudoers
+[2020-08-02T01:14:20.318Z]  ---> Using cache
+[2020-08-02T01:14:20.318Z]  ---> dfc597241a35
+[2020-08-02T01:14:20.318Z] Step 4/8 : USER admin
+[2020-08-02T01:14:20.318Z]  ---> Using cache
+[2020-08-02T01:14:20.318Z]  ---> 65d31d0f6cfd
+[2020-08-02T01:14:20.318Z] Step 5/8 : RUN sudo apt-get install openjdk-11-jdk -y ; sudo apt-get install nginx -y ; sudo apt-get install net-tools -y ;
+[2020-08-02T01:14:20.318Z]  ---> Using cache
+[2020-08-02T01:14:20.318Z]  ---> 83b3c02c7e5a
+[2020-08-02T01:14:20.318Z] Step 6/8 : COPY ./nginx.conf /etc/nginx/nginx.conf
+[2020-08-02T01:14:20.318Z]  ---> Using cache
+[2020-08-02T01:14:20.318Z]  ---> 491751728aec
+[2020-08-02T01:14:20.318Z] Step 7/8 : USER nginx-user
+[2020-08-02T01:14:20.318Z]  ---> Using cache
+[2020-08-02T01:14:20.318Z]  ---> 7074796bca3c
+[2020-08-02T01:14:20.318Z] Step 8/8 : ENTRYPOINT ["tail", "-f", "/dev/null"]
+[2020-08-02T01:14:20.318Z]  ---> Using cache
+[2020-08-02T01:14:20.318Z]  ---> 017b267d1ece
+[2020-08-02T01:14:20.318Z] Successfully built 017b267d1ece
+[2020-08-02T01:14:20.318Z] Successfully tagged maurick/ubuntu:25
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (test docker image)
+[Pipeline] echo
+[2020-08-02T01:14:20.561Z] ......testing docker image......
+[Pipeline] sh
+[2020-08-02T01:14:20.864Z] + docker run -d --name mytest_25 -p 8081:3434 maurick/ubuntu:25
+[2020-08-02T01:14:21.420Z] 133ee2a4320eca49121111f6a5fc7b58a087e44befc6dbeb5d73f770048326ed
+[Pipeline] sh
+[2020-08-02T01:14:23.082Z] + docker exec -d mytest_25 sudo service nginx start
+[Pipeline] sh
+[2020-08-02T01:14:23.942Z] + curl -sL http://localhost:8081 -w %{http_code}\n -o /dev/null
+[2020-08-02T01:14:23.942Z] 200
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (push docker image to Docker hub)
+[Pipeline] echo
+[2020-08-02T01:14:24.175Z] login into Docker
+[Pipeline] withCredentials
+[2020-08-02T01:14:26.151Z] Masking supported pattern matches of $USERNAME or $PASSWORD
+[Pipeline] {
+[Pipeline] sh
+[2020-08-02T01:14:26.934Z] + docker login -u **** -p ****
+[2020-08-02T01:14:27.196Z] WARNING! Using --password via the CLI is insecure. Use --password-stdin.
+[2020-08-02T01:14:29.687Z] WARNING! Your password will be stored unencrypted in /var/lib/jenkins/.docker/config.json.
+[2020-08-02T01:14:29.687Z] Configure a credential helper to remove this warning. See
+[2020-08-02T01:14:29.687Z] https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+[2020-08-02T01:14:29.687Z] 
+[2020-08-02T01:14:29.687Z] Login Succeeded
+[Pipeline] echo
+[2020-08-02T01:14:29.718Z] .....pushing image to DockerHub.....
+[Pipeline] sh
+[2020-08-02T01:14:30.003Z] + docker push ****/ubuntu:25
+[2020-08-02T01:14:30.004Z] The push refers to repository [docker.io/****/ubuntu]
+[2020-08-02T01:14:30.924Z] 280b9a04b5dd: Preparing
+[2020-08-02T01:14:30.924Z] 981fe5602166: Preparing
+[2020-08-02T01:14:30.924Z] 4df301769e69: Preparing
+[2020-08-02T01:14:30.924Z] 6ebaad52c25b: Preparing
+[2020-08-02T01:14:30.924Z] 095624243293: Preparing
+[2020-08-02T01:14:30.924Z] a37e74863e72: Preparing
+[2020-08-02T01:14:30.924Z] 8eeb4a14bcb4: Preparing
+[2020-08-02T01:14:30.924Z] ce3011290956: Preparing
+[2020-08-02T01:14:30.924Z] a37e74863e72: Waiting
+[2020-08-02T01:14:30.924Z] 8eeb4a14bcb4: Waiting
+[2020-08-02T01:14:30.924Z] ce3011290956: Waiting
+[2020-08-02T01:14:35.052Z] 095624243293: Mounted from library/ubuntu
+[2020-08-02T01:14:37.540Z] 4df301769e69: Pushed
+[2020-08-02T01:14:37.540Z] 280b9a04b5dd: Pushed
+[2020-08-02T01:14:37.540Z] a37e74863e72: Mounted from library/ubuntu
+[2020-08-02T01:14:40.774Z] 8eeb4a14bcb4: Mounted from library/ubuntu
+[2020-08-02T01:14:41.025Z] ce3011290956: Mounted from library/ubuntu
+[2020-08-02T01:15:27.548Z] 6ebaad52c25b: Pushed
+[2020-08-02T01:27:33.882Z] 981fe5602166: Pushed
+[2020-08-02T01:27:33.883Z] 25: digest: sha256:5060e495c70eb538b4d9850b84bcaa50d04e620a6b759160f14c5aa0762788b8 size: 1992
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timestamps
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
+
