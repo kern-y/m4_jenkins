@@ -23,7 +23,7 @@ pipeline {
         stage("running an artifact") {
             steps {
 			    sh 'cd target'
-				sh 'java -jar *.war --httpPort=3000'
+				sh 'java -jar *.jar --httpPort=3000 &'
             }
         }
 		        stage("testing an app") {
