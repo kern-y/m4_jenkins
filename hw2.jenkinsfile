@@ -24,6 +24,7 @@ pipeline {
         stage("running an artifact") {
             steps {
 			    sh 'cd target && java -Dserver.port=3000 -jar *.jar &'
+				sh 'sleep 60'
             }
         }
 		stage("testing an app") {
