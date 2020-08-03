@@ -18,14 +18,12 @@ pipeline {
         stage("building an artifact") {
             steps {
 			    sh 'docker run --rm --name app_build -v $WORKSPACE:/usr/src/mymaven -w /usr/src/mymaven maven:latest mvn clean install'
-				sh 'docker run --rm --name app_chmod -v $WORKSPACE:/usr/src/mymaven -w /usr/src/mymaven maven:latest chmod 660 ./target/spring-boot-web-0.0.1-SNAPSHOT.jar'
+				sh 'docker run --rm --name app_chmod -v $WORKSPACE:/usr/src/mymaven -w /usr/src/mymaven maven:latest chmod 666 ./target/spring-boot-web-0.0.1-SNAPSHOT.jar'
             }
         }
         stage("running an artifact") {
             steps {
-			    sh 'cd target'
-				sh 'ls -ahl'
-				sh 'sudo java -jar *.jar --httpPort=3000 &'
+			    sh 'cd target && java -jar *.jar --httpPort=3000 &'
             }
         }
 		stage("testing an app") {
